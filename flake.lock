@@ -32,6 +32,33 @@
         "type": "github"
       }
     },
+    "pythoneda-artifact-git-tagging": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixos": [
+          "nixos"
+        ],
+        "pythoneda-base": [
+          "pythoneda-base"
+        ]
+      },
+      "locked": {
+        "lastModified": 1687445602,
+        "narHash": "sha256-HG1c3ixVZAL4TPSWHC7QOoYkhi1xTFGKVc7FMkjTVdQ=",
+        "owner": "pythoneda-artifact",
+        "repo": "git-tagging",
+        "rev": "fee7d9b261b7e2a66e6757f2f0a429691cff2a03",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pythoneda-artifact",
+        "ref": "0.0.1a3",
+        "repo": "git-tagging",
+        "type": "github"
+      }
+    },
     "pythoneda-base": {
       "inputs": {
         "flake-utils": [
@@ -60,6 +87,7 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "nixos": "nixos",
+        "pythoneda-artifact-git-tagging": "pythoneda-artifact-git-tagging",
         "pythoneda-base": "pythoneda-base"
       }
     }

@@ -1,5 +1,5 @@
 """
-pythonedarealmunveilingpartner/unveilingpartner.py
+pythonedarealmunveilingpartner/unveiling_partner.py
 
 This file declares the UnveilingPartner class.
 
@@ -19,10 +19,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda.value_object import attribute, sensitive, ValueObject
+from pythoneda.event import Event
+from pythoneda.event_emitter import EventEmitter
+from pythoneda.event_listener import EventListener
 
-import abc
+from pythonedaartifacteventgittagging.tag_credentials_provided import TagCredentialsProvided
+from pythonedaartifacteventgittagging.tag_credentials_requested import TagCredentialsRequested
 
-class UnveilingPartner(ValueObject, abc.ABC):
+from typing import List, Type
+
+class UnveilingPartner(ValueObject, EventListener, EventEmitter):
     """
     Represents UnveilingPartner.
 
@@ -40,6 +46,8 @@ class UnveilingPartner(ValueObject, abc.ABC):
     def __init__(self, masterPassword: str):
         """
         Creates a new UnveilingPartner instance.
+        :param masterPassword: The master password.
+        :type masterPassword: str
         """
         super().__init__()
         self._master_password = masterPassword
@@ -68,11 +76,31 @@ class UnveilingPartner(ValueObject, abc.ABC):
 
         return cls._singleton
 
-    @abc.abstractclassmethod
     @classmethod
-    def initialize(cls) -> UnveilingPartner:
+    def initialize(cls): # -> UnveilingPartner:
         """
         Initializes the singleton instance.
         :return: The singleton instance.
         :rtype: UnveilingPartner
         """
+        raise NotImplementedError("initialize() should be implemented in subclasses")
+
+    @classmethod
+    def supported_events(cls) -> List[Type[Event]]:
+        """
+        Retrieves the list of supported event classes.
+        :return: Such list.
+        :rtype: List
+        """
+        return [ TagCredentialsRequested ]
+
+
+    @classmethod
+    def listenTagCredentialsRequested(cls, event: TagCredentialsRequested):
+        """
+        Gets notified of a TagCredentialsRequested event.
+        Emits a TagCredentialsProvided event.
+        :param event: The event.
+        :type event: TagCredentialsRequested
+        """
+        cls.instance().emit(TagCredentialsProvided(event.id, event.repository_url, event.branch, "sshUsername", "privateKeyFile", "privateKeyPassphrase"))
