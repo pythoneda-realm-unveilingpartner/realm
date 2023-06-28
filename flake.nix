@@ -27,8 +27,8 @@
         maintainers = with pkgs.lib.maintainers; [ ];
         nixpkgsRelease = "nixos-23.05";
         shared = import ./nix/devShells.nix;
-        pythoneda-realm-unveilingpartner-for =
-          { version, pythoneda-base, pythoneda-artifact-git-tagging, python }:
+        pythoneda-realm-unveilingpartner-for = { version, pythoneda-base
+          , pythoneda-artifact-event-git-tagging, python }:
           let
             pname = "pythoneda-realm-unveilingpartner";
             pythonVersionParts = builtins.splitVersion python.version;
