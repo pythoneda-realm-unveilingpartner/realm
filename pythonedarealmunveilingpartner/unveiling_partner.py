@@ -22,13 +22,15 @@ from pythoneda.value_object import attribute, sensitive, ValueObject
 from pythoneda.event import Event
 from pythoneda.event_emitter import EventEmitter
 from pythoneda.event_listener import EventListener
+from pythoneda.ports import Ports
 
 from pythonedaartifacteventgittagging.tag_credentials_provided import TagCredentialsProvided
 from pythonedaartifacteventgittagging.tag_credentials_requested import TagCredentialsRequested
 
+import abc
 from typing import List, Type
 
-class UnveilingPartner(ValueObject, EventListener, EventEmitter):
+class UnveilingPartner(ValueObject, EventListener, abc.ABC):
     """
     Represents UnveilingPartner.
 
@@ -96,11 +98,12 @@ class UnveilingPartner(ValueObject, EventListener, EventEmitter):
 
 
     @classmethod
-    def listenTagCredentialsRequested(cls, event: TagCredentialsRequested):
+    async def listen_TagCredentialsRequested(cls, event: TagCredentialsRequested):
         """
         Gets notified of a TagCredentialsRequested event.
         Emits a TagCredentialsProvided event.
         :param event: The event.
         :type event: TagCredentialsRequested
         """
-        cls.instance().emit(TagCredentialsProvided(event.id, event.repository_url, event.branch, "sshUsername", "privateKeyFile", "privateKeyPassphrase"))
+        event_emitter = Ports.instance().resolve(EventEmitter)
+        await event_emitter.emit(TagCredentialsProvided(event.id, event.repository_url, event.branch, "sshUsername", "privateKeyFile", "privateKeyPassphrase"))
