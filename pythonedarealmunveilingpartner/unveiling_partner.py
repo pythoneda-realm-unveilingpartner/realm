@@ -18,16 +18,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+import abc
 from pythoneda.value_object import attribute, sensitive, ValueObject
 from pythoneda.event import Event
 from pythoneda.event_emitter import EventEmitter
 from pythoneda.event_listener import EventListener
 from pythoneda.ports import Ports
-
+from pythonedaartifacteventchanges.change_staging_requested import ChangeStagingRequested
 from pythonedaartifacteventgittagging.tag_credentials_provided import TagCredentialsProvided
 from pythonedaartifacteventgittagging.tag_credentials_requested import TagCredentialsRequested
-
-import abc
 from typing import List, Type
 
 class UnveilingPartner(ValueObject, EventListener, abc.ABC):
@@ -103,7 +102,23 @@ class UnveilingPartner(ValueObject, EventListener, abc.ABC):
         Gets notified of a TagCredentialsRequested event.
         Emits a TagCredentialsProvided event.
         :param event: The event.
-        :type event: TagCredentialsRequested
+        :type event: pythonedaartifacteventgittagging.tag_credentials_requested.TagCredentialsRequested
         """
         event_emitter = Ports.instance().resolve(EventEmitter)
-        await event_emitter.emit(TagCredentialsProvided(event.id, event.repository_url, event.branch, "sshUsername", "privateKeyFile", "privateKeyPassphrase"))
+        await event_emitter.emit(TagCredentialsProvided(event.repository_url, event.branch, "sshUsername", "privateKeyFile", "privateKeyPassphrase", event.id))
+
+    @classmethod
+    async def emit_ChangeStagingRequested(cls, changeFile:str, repositoryUrl:str, branch:str) -> ChangeStagingRequested:
+        """
+        Emits a ChangeStagingRequested event with the information provided.
+        :param changeFile: The change file.
+        :type changeFile: str
+        :param repositoryUrl: The url of the repository.
+        :type repositoryUrl: str
+        :param branch: The branch in the repository.
+        :type branch: str
+        :return: An event ChangeStagingRequested with the information provided.
+        :rtype: pythonedaartifacteventchanges.change_staging_requested.ChangeStagingRequested
+        """
+        event_emitter = Ports.instance().resolve(EventEmitter)
+        await event_emitter.emit(ChangeStagingRequested(changeFile, repositoryUrl, branch))

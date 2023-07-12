@@ -9,7 +9,8 @@ packages = [{include = "pythonedarealmunveilingpartner"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-pythoneda-base = "^0.0.1a15"
+pythoneda-base = "^0.0.1a16"
+pythoneda-artifact-event-changes = "^0.0.1a1"
 pythoneda-artifact-event-git-tagging = "^0.0.1a1"
 
 [tool.poetry.dev-dependencies]
