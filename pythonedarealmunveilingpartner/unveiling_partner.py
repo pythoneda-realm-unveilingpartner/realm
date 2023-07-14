@@ -27,6 +27,7 @@ from pythoneda.ports import Ports
 from pythonedaartifacteventchanges.change_staging_requested import ChangeStagingRequested
 from pythonedaartifacteventgittagging.tag_credentials_provided import TagCredentialsProvided
 from pythonedaartifacteventgittagging.tag_credentials_requested import TagCredentialsRequested
+from pythonedaartifactsharedchanges.change import Change
 from typing import List, Type
 
 class UnveilingPartner(ValueObject, EventListener, abc.ABC):
@@ -121,4 +122,4 @@ class UnveilingPartner(ValueObject, EventListener, abc.ABC):
         :rtype: pythonedaartifacteventchanges.change_staging_requested.ChangeStagingRequested
         """
         event_emitter = Ports.instance().resolve(EventEmitter)
-        await event_emitter.emit(ChangeStagingRequested(changeFile, repositoryUrl, branch))
+        await event_emitter.emit(ChangeStagingRequested(Change.from_file(changeFile, repositoryUrl, branch)))
