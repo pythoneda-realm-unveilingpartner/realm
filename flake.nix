@@ -29,6 +29,12 @@
       inputs.nixos.follows = "nixos";
       inputs.flake-utils.follows = "flake-utils";
     };
+    pythoneda-shared-git = {
+      url = "github:pythoneda-shared/git/0.0.1a4";
+      inputs.nixos.follows = "nixos";
+      inputs.flake-utils.follows = "flake-utils";
+      inputs.pythoneda-base.follows = "pythoneda-base";
+    };
   };
   outputs = inputs:
     with inputs;
@@ -46,9 +52,9 @@
         pythoneda-realm-unveilingpartner-for = { python
           , pythoneda-artifact-event-changes
           , pythoneda-artifact-event-git-tagging
-          , pythoneda-artifact-shared-changes, pythoneda-base, version }:
+          , pythoneda-artifact-shared-changes, pythoneda-base
+          , pythoneda-shared-git, version }:
           let
-            pname = "pythoneda-realm-unveilingpartner";
             pythonVersionParts = builtins.splitVersion python.version;
             pythonMajorVersion = builtins.head pythonVersionParts;
             pythonMajorMinorVersion =
@@ -69,6 +75,7 @@
               pythoneda-artifact-event-git-tagging
               pythoneda-artifact-shared-changes
               pythoneda-base
+              pythoneda-shared-git
               unidiff
             ];
 
@@ -83,6 +90,7 @@
               pip install ${pythoneda-artifact-event-changes}/dist/pythoneda_artifact_event_changes-${pythoneda-artifact-event-changes.version}-py3-none-any.whl
               pip install ${pythoneda-artifact-event-git-tagging}/dist/pythoneda_artifact_event_git_tagging-${pythoneda-artifact-event-git-tagging.version}-py3-none-any.whl
               pip install ${pythoneda-artifact-shared-changes}/dist/pythoneda_artifact_shared_changes-${pythoneda-artifact-shared-changes.version}-py3-none-any.whl
+              pip install ${pythoneda-shared-git}/dist/pythoneda_shared_git-${pythoneda-shared-git.version}-py3-none-any.whl
               rm -rf .env
             '';
 
@@ -98,11 +106,13 @@
           };
         pythoneda-realm-unveilingpartner-0_0_1a4-for = { python
           , pythoneda-artifact-event-changes, pythoneda-artifact-shared-changes
-          , pythoneda-artifact-event-git-tagging, pythoneda-base }:
+          , pythoneda-artifact-event-git-tagging, pythoneda-base
+          , pythoneda-shared-git }:
           pythoneda-realm-unveilingpartner-for {
             inherit python pythoneda-artifact-event-changes
               pythoneda-artifact-event-git-tagging
-              pythoneda-artifact-shared-changes pythoneda-base;
+              pythoneda-artifact-shared-changes pythoneda-base
+              pythoneda-shared-git;
             version = "0.0.1a4";
           };
       in rec {
@@ -120,6 +130,8 @@
                 pythoneda-artifact-shared-changes.packages.${system}.pythoneda-artifact-shared-changes-latest-python39;
               pythoneda-base =
                 pythoneda-base.packages.${system}.pythoneda-base-latest-python39;
+              pythoneda-shared-git =
+                pythoneda-shared-git.packages.${system}.pythoneda-shared-git-latest-python39;
             };
           pythoneda-realm-unveilingpartner-0_0_1a4-python310 =
             pythoneda-realm-unveilingpartner-0_0_1a4-for {
@@ -132,13 +144,15 @@
                 pythoneda-artifact-shared-changes.packages.${system}.pythoneda-artifact-shared-changes-latest-python310;
               pythoneda-base =
                 pythoneda-base.packages.${system}.pythoneda-base-latest-python310;
+              pythoneda-shared-git =
+                pythoneda-shared-git.packages.${system}.pythoneda-shared-git-latest-python310;
             };
+          pythoneda-realm-unveilingpartner-latest =
+            pythoneda-realm-unveilingpartner-latest-python310;
           pythoneda-realm-unveilingpartner-latest-python39 =
             pythoneda-realm-unveilingpartner-0_0_1a4-python39;
           pythoneda-realm-unveilingpartner-latest-python310 =
             pythoneda-realm-unveilingpartner-0_0_1a4-python310;
-          pythoneda-realm-unveilingpartner-latest =
-            pythoneda-realm-unveilingpartner-latest-python310;
         };
         devShells = rec {
           default = pythoneda-realm-unveilingpartner-latest;

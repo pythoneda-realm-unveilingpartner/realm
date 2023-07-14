@@ -13,6 +13,7 @@ pythoneda-artifact-event-changes = "^0.0.1a1"
 pythoneda-artifact-event-git-tagging = "^0.0.1a1"
 pythoneda-artifact-shared-changes = "^0.0.1a1"
 pythoneda-base = "^0.0.1a18"
+pythoneda-shared-git = "^0.0.1a4"
 unidiff = "^0.7.4"
 
 [tool.poetry.dev-dependencies]

@@ -24,10 +24,13 @@ from pythoneda.event import Event
 from pythoneda.event_emitter import EventEmitter
 from pythoneda.event_listener import EventListener
 from pythoneda.ports import Ports
+from pythonedaartifacteventchanges.change_staging_from_folder_requested import ChangeStagingFromFolderRequested
 from pythonedaartifacteventchanges.change_staging_requested import ChangeStagingRequested
 from pythonedaartifacteventgittagging.tag_credentials_provided import TagCredentialsProvided
 from pythonedaartifacteventgittagging.tag_credentials_requested import TagCredentialsRequested
 from pythonedaartifactsharedchanges.change import Change
+from pythonedasharedgit.git_diff import GitDiff
+from pythonedasharedgit.git_repo import GitRepo
 from typing import List, Type
 
 class UnveilingPartner(ValueObject, EventListener, abc.ABC):
@@ -94,8 +97,7 @@ class UnveilingPartner(ValueObject, EventListener, abc.ABC):
         :return: Such list.
         :rtype: List
         """
-        return [ TagCredentialsRequested ]
-
+        return [ ChangeStagingFromFolderRequested, TagCredentialsRequested ]
 
     @classmethod
     async def listen_TagCredentialsRequested(cls, event: TagCredentialsRequested):
@@ -109,17 +111,33 @@ class UnveilingPartner(ValueObject, EventListener, abc.ABC):
         await event_emitter.emit(TagCredentialsProvided(event.repository_url, event.branch, "sshUsername", "privateKeyFile", "privateKeyPassphrase", event.id))
 
     @classmethod
-    async def emit_ChangeStagingRequested(cls, changeFile:str, repositoryUrl:str, branch:str) -> ChangeStagingRequested:
+    async def listen_ChangeStagingFromFolderRequested(cls, event: ChangeStagingFromFolderRequested):
+        """
+        Gets notified of a ChangeStagingFromFolderRequested event.
+        Emits a ChangeStagingRequested event.
+        :param event: The event.
+        :type event: pythonedaartifacteventchanges.change_staging_from_folder_requested.ChangeStagingFromFolderRequested
+        """
+        print(f'Received ChangeStagingFromFolderRequested!')
+        change_diff = GitDiff(event.repository_folder).diff()
+        repository_url = GitRepo.remote_urls(event.repository_folder)['origin'][0]
+        branch = GitRepo.current_branch(event.repository_folder)
+        await cls.emit_ChangeStagingRequested(change_diff, repository_url, branch, event.id)
+
+    @classmethod
+    async def emit_ChangeStagingRequested(cls, changeDiff:str, repositoryUrl: str, branch: str, requestFromFolderId:str=None) -> ChangeStagingRequested:
         """
         Emits a ChangeStagingRequested event with the information provided.
-        :param changeFile: The change file.
-        :type changeFile: str
+        :param changeDiff: The change.
+        :type changeDiff: str
         :param repositoryUrl: The url of the repository.
         :type repositoryUrl: str
         :param branch: The branch in the repository.
         :type branch: str
+        :param requestFromFolderId: The id of the ChangeStagingFromFolderRequest, if any.
+        :type requestFromFolderId: str
         :return: An event ChangeStagingRequested with the information provided.
         :rtype: pythonedaartifacteventchanges.change_staging_requested.ChangeStagingRequested
         """
         event_emitter = Ports.instance().resolve(EventEmitter)
-        await event_emitter.emit(ChangeStagingRequested(Change.from_file(changeFile, repositoryUrl, branch)))
+        await event_emitter.emit(ChangeStagingRequested(Change.from_unidiff_text(changeDiff, repositoryUrl, branch), requestFromFolderId))
