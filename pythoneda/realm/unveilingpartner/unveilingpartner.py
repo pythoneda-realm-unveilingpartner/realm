@@ -56,13 +56,13 @@ class Unveilingpartner(EventListener):
         return cls._singleton
 
     @classmethod
-    @listen(ChangeStagingCodeExecutionRequested)
+    @listen(ChangeStagingCodeExecutionPackaged)
     async def listen_ChangeStagingCodeExecutionPackaged(cls, event: ChangeStagingCodeExecutionPackaged):
         """
         Gets notified of a ChangeStagingCodeExecutionPackaged event.
         :param event: The event.
         :type event: pythoneda.shared.artifact_changes.events.ChangeStagingCodeExecutionPackaged
         """
-        Rydnr.logger().debug(f"Received {type(event)}")
-        Rydnr.logger().info(f"Running {type(event)}")
+        Unveilingpartner.logger().debug(f"Received {type(event)}")
+        Unveilingpartner.logger().info(f"Running {type(event)}")
         await event.nix_flake.run()
