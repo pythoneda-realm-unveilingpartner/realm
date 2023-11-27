@@ -18,9 +18,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from pythoneda import attribute, listen, sensitive, Event, EventEmitter, EventListener, Ports
-from pythoneda.shared.artifact_changes.events import ChangeStagingCodeExecutionPackaged
+from pythoneda import (
+    attribute,
+    listen,
+    sensitive,
+    Event,
+    EventEmitter,
+    EventListener,
+    Ports,
+)
+from pythoneda.shared.artifact.events.code import ChangeStagingCodeExecutionPackaged
 from typing import List, Type
+
 
 class Unveilingpartner(EventListener):
     """
@@ -57,11 +66,13 @@ class Unveilingpartner(EventListener):
 
     @classmethod
     @listen(ChangeStagingCodeExecutionPackaged)
-    async def listen_ChangeStagingCodeExecutionPackaged(cls, event: ChangeStagingCodeExecutionPackaged):
+    async def listen_ChangeStagingCodeExecutionPackaged(
+        cls, event: ChangeStagingCodeExecutionPackaged
+    ):
         """
         Gets notified of a ChangeStagingCodeExecutionPackaged event.
         :param event: The event.
-        :type event: pythoneda.shared.artifact_changes.events.ChangeStagingCodeExecutionPackaged
+        :type event: pythoneda.shared.artifact.events.code.ChangeStagingCodeExecutionPackaged
         """
         Unveilingpartner.logger().debug(f"Received {type(event)}")
         Unveilingpartner.logger().info(f"Running {type(event)}")
