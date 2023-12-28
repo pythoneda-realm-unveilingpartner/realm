@@ -28,7 +28,6 @@ from pythoneda import (
     Ports,
 )
 from pythoneda.shared.artifact.events.code import ChangeStagingCodeExecutionPackaged
-from typing import List, Type
 
 
 class Unveilingpartner(EventListener):
