@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/realm/unveilingpartner/unveilingpartner.py
 
@@ -73,6 +74,5 @@ class Unveilingpartner(EventListener):
         :param event: The event.
         :type event: pythoneda.shared.artifact.events.code.ChangeStagingCodeExecutionPackaged
         """
-        Unveilingpartner.logger().debug(f"Received {type(event)}")
         Unveilingpartner.logger().info(f"Running {type(event)}")
         await event.nix_flake.run()
